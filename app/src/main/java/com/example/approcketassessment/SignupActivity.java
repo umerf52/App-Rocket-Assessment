@@ -94,7 +94,6 @@ public class SignupActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         Log.d("signup", "Failed");
                         Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
-                        Log.e("signup", "forloop");
                         returnError();
                     }
                 });

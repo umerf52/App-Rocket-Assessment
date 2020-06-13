@@ -55,11 +55,12 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (requestCode == LOGIN_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-//                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-//                intent.putExtra("username", "username");
-//                startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                intent.putExtra("username", data.getStringArrayExtra("username"));
+                Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_LONG).show();
+                startActivity(intent);
             } else {
-                Toast.makeText(getApplicationContext(), "Some error occurred during sign up", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), data.getStringExtra("msg"), Toast.LENGTH_LONG).show();
             }
         }
     }
