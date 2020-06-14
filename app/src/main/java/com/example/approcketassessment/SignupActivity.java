@@ -7,9 +7,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,7 +38,6 @@ public class SignupActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
                 .build();
         db.setFirestoreSettings(settings);
 
@@ -50,6 +51,17 @@ public class SignupActivity extends AppCompatActivity {
                 final String usernameText = username.getText().toString().trim();
                 final String passwordText = password.getText().toString().trim();
 
+                final AlertDialog.Builder builder = new AlertDialog.Builder(SignupActivity.this);
+                builder.setCancelable(false);
+
+                // Set up the input
+                final ProgressBar progressBar = new ProgressBar(SignupActivity.this, null, android.R.attr.progressBarStyleLarge);
+                progressBar.setIndeterminate(true);
+                progressBar.isShown();
+                builder.setView(progressBar);
+
+                final AlertDialog alertDialog = builder.show();
+
                 db.collection("accounts")
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -58,13 +70,13 @@ public class SignupActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                         if (usernameText.equals(document.getString("username"))) {
-                                            returnError();
+                                            returnError(alertDialog);
                                         }
                                     }
-                                    addUser(usernameText, passwordText);
+                                    addUser(usernameText, passwordText, alertDialog);
                                 } else {
                                     Log.w("signup", "Error getting documents.", task.getException());
-                                    returnError();
+                                    returnError(alertDialog);
                                 }
                             }
                         });
@@ -72,7 +84,7 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-    void addUser(final String un, String pw) {
+    void addUser(final String un, String pw, final AlertDialog ad) {
         Map<String, Object> user = new HashMap<>();
         user.put("username", un);
         user.put("password", pw);
@@ -94,14 +106,15 @@ public class SignupActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         Log.d("signup", "Failed");
                         Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
-                        returnError();
+                        returnError(ad);
                     }
                 });
     }
 
-    void returnError() {
+    void returnError(AlertDialog ad) {
         Intent intent = new Intent();
         setResult(Activity.RESULT_CANCELED, intent);
+        ad.dismiss();
         finish();
     }
 }
