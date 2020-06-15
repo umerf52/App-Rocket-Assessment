@@ -1,5 +1,6 @@
 package com.example.approcketassessment;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.androdocs.httprequest.HttpRequest;
 
@@ -48,6 +50,15 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 new weatherTask().execute();
+            }
+        });
+
+        CardView chatCard = findViewById(R.id.chat_card);
+        chatCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ChatScreen.class);
+                startActivity(intent);
             }
         });
     }
